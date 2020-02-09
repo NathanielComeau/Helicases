@@ -2,7 +2,7 @@
 
 # Nat's work on weekend of Feb 8th
 
-Summary: I started to explore quality score data from a sample fastq file. Try running "python3 quap.py" to see some pretty plots.
+Summary: I started to explore quality score data from a sample fastq file. Try running "cd quality_scores; python3 qa_manipulation.py" to see some pretty plots of quality scores from 1, 10, and 100 reads.
 
 
 - Downloaded scalce and built it from source (didn't build on MacOS, had to build on Linux)
