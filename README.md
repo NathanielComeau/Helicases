@@ -1,5 +1,13 @@
 # Helicases
 
+```txt
+`-:-.   ,-;"`-:-.   ,-;"`-:-.   ,-;"`-:-.   ,-;"
+   `=`,'=/     `=`,'=/     `=`,'=/     `=`,'=/
+     y==/        y==/        y==/        y==/
+   ,=,-<=`.    ,=,-<=`.    ,=,-<=`.    ,=,-<=`.
+,-'-'   `-=_,-'-'   `-=_,-'-'   `-=_,-'-'   `-=_
+```
+
 # Nat's work on weekend of Feb 8th
 
 Summary: I started to explore quality score data from a sample fastq file. Try running "cd quality_scores; python3 qa_manipulation.py" to see some pretty plots of quality scores from 1, 10, and 100 reads.
