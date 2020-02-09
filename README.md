@@ -2,6 +2,9 @@
 
 # Nat's work on weekend of Feb 8th
 
+Summary: I started to explore quality score data from a sample fastq file. Try running "python3 quap.py" to see some pretty plots.
+
+
 - Downloaded scalce and built it from source (didn't build on MacOS, had to build on Linux)
 - Downloaded an e-coli genome from https://www.ncbi.nlm.nih.gov/assembly/GCF_000008865.2
 - Whoops, figured out that was an assembly file not a file with a ton of reads in it...
@@ -100,9 +103,60 @@ seqkit head -n 1000 SRR2040271_1.fastq > thousand_records.fastq
 awk 'NR % 4 == 0' thousand_records.fastq > quality_scores.txt
 awk 'NR % 4 == 0' SRR2040271_1.fastq > all_quality_scores.txt
 
-
-
 ```
+
+## I also started exploring the identifier data (flow cell, etc.)
+
+- Started with SRR2040271_1.fastq
+- Extracted 1000 records with seqkit.
+- Extracted names (every 4th line after first) with awk (quality_scores.txt).
+
+```bash
+seqkit head -n 1000 SRR2040271_1.fastq > thousand_records.fastq
+awk 'NR % 4 == 1' thousand_records.fastq > identifiers.txt
+
+``` 
+
+**Shoot, it didn't work for this genome! The identifiers were totally different
+then the illumina sequence information:**
+
+```bash
+w134-87-145-178:flow_cell_lanes nat$ head identifiers.txt 
+@SRR2040271.1 SN603_WBP007_8_1101_63.30_99.90 length=100
+@SRR2040271.2 SN603_WBP007_8_1101_79.90_99.30 length=100
+@SRR2040271.3 SN603_WBP007_8_1101_218.30_99.00 length=100
+@SRR2040271.4 SN603_WBP007_8_1101_247.90_99.30 length=100
+@SRR2040271.5 SN603_WBP007_8_1101_275.90_99.10 length=100
+@SRR2040271.6 SN603_WBP007_8_1101_399.20_99.50 length=100
+@SRR2040271.7 SN603_WBP007_8_1101_419.60_99.20 length=100
+@SRR2040271.8 SN603_WBP007_8_1101_421.50_99.60 length=100
+@SRR2040271.9 SN603_WBP007_8_1101_459.10_99.70 length=100
+@SRR2040271.10 SN603_WBP007_8_1101_487.80_99.60 length=100
+```
+
+Where from the FASTQ wikipedia page we expect something like:
+
+    - @HWUSI-EAS100R:6:73:941:1973#0/1
+    - @EAS139:136:FC706VJ:2:2104:15343:197393 1:Y:18:ATCACG
+
+From the wiki page identifiers take one of the following formats:
+
+```text
+<Instrument Name>:<tile number>:<x-coordinate>:<y-coordinate>...#<index number>/<member of pair>
+```
+Where everything after ... is complicateded, or:
+
+```text
+<Instrument Name>:<Run ID>:<Flowcell ID>:<Flowcell Lane>:<Tile Number>:<X Coord>:<Y Coord> ...
+```
+Again where everything after ... is complicated.
+
+
+
+
+I restarted with a new genome found here: https://www.internationalgenome.org/data-portal/sample/HG00114
+
+
 
 
 
