@@ -118,7 +118,7 @@ awk 'NR % 4 == 1' thousand_records.fastq > identifiers.txt
 ``` 
 
 **Shoot, it didn't work for this genome! The identifiers were totally different
-then the illumina sequence information:**
+then the [illumina sequence information](https://en.wikipedia.org/wiki/FASTQ_format#Illumina_sequence_identifiers):**
 
 ```bash
 w134-87-145-178:flow_cell_lanes nat$ head identifiers.txt 
@@ -152,9 +152,73 @@ Where everything after ... is complicateded, or:
 Again where everything after ... is complicated.
 
 
+- I restarted with a new genome found here: https://www.internationalgenome.org/data-portal/sample/HG00114 . 
+- Damn, downloading it sucked but I finally got it downloaded and expanded.
+- Started with ERR013138_1.fastq
+- Extracted 1000 records with seqkit.
+- Extracted names (every 4th line after first) with awk (quality_scores.txt).
+- Designed a regex to split out info from identifiers. *This regex is probably incorrect for some data formats.* : https://regex101.com/r/RnuEOJ/3
 
+```bash
+seqkit head -n 1000 ERR013138_1.fastq > thousand_records.fastq
+awk 'NR % 4 == 1' thousand_records.fastq > identifiers.txt
 
-I restarted with a new genome found here: https://www.internationalgenome.org/data-portal/sample/HG00114
+``` 
+
+- Parsed identifiers into a dictionary of component values (names, instrument, flow cell lane, etc). *Ibrahim: Does this look right?*
+
+```bash
+(bio) w134-87-145-178:flow_cell_lanes nat$ ./quap.py 
+whole_identifier  : 
+@ERR013138.1 IL39_4668:5:1:1035:1408/1
+@ERR013138.2 IL39_4668:5:1:1035:8133/1
+@ERR013138.3 IL39_4668:5:1:1035:6544/1
+@ERR013138.4 IL39_4668:5:1:1035:2520/1
+@ERR013138.5 IL39_4668:5:1:1036:15336/1
+
+names  : 
+@ERR013138.1
+@ERR013138.2
+@ERR013138.3
+@ERR013138.4
+@ERR013138.5
+
+instrument  : 
+IL39_4668
+IL39_4668
+IL39_4668
+IL39_4668
+IL39_4668
+
+flow_cell_lane  : 
+5
+5
+5
+5
+5
+
+flow_cell_number  : 
+1
+1
+1
+1
+1
+
+x_coord  : 
+1035
+1035
+1035
+1035
+1036
+
+y_coord  : 
+1408
+8133
+6544
+2520
+15336
+```
+
 
 
 
