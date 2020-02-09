@@ -44,7 +44,7 @@ def plotFromConverted(qaFile, i, j):
 	with open(qaFile, 'r') as f:
 		scores = f.readlines()
 	scores = [x.rstrip('\n').split(',') for x in scores]
-	print(scores)
+	#print(scores)
 	plt.rcdefaults()
 	fig, ax = plt.subplots()
 	for k in range(i,j):
@@ -58,4 +58,6 @@ def plotFromConverted(qaFile, i, j):
 # Plot quality score 0 to 1000 from "quality_scores.txt"
 #plotQualityScores("quality_scores.txt", 0, 100)
 #writeQualityScores("quality_scores.txt", 'converted_quality_scores.txt')
+plotFromConverted("converted_quality_scores.txt", 0, 1)
+plotFromConverted("converted_quality_scores.txt", 0, 10)
 plotFromConverted("converted_quality_scores.txt", 0, 100)
