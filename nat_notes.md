@@ -127,6 +127,7 @@ writeIdentifiers(result)
 
 ## ToDo
 
+- k-means clustering
 - Which identifier components should we use? Which can we throw out, they're useless? 
 - Do a quick sanity check on identifier components to explore their properties.
 	1) Is name & instrument the same for all identifiers?
@@ -135,7 +136,9 @@ writeIdentifiers(result)
 
 
 
+## Crazy Ideas and Notes
 
+- Can we use NA12878 and GIAB to validate any of these results?
 
 
 
