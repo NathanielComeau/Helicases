@@ -247,10 +247,12 @@ Tried to follow the instructions https://github.com/sfu-compbio/compression-benc
 
 # BLOCKAGES: Where we need help from Ibrahim
 
+- *Nat: Show Ibrahim full_genome_exploration/side_by_side.txt . What are some potential clustering methods we can use on this?*
+- *Nat: Sample data. I grabbed some human genome data from https://www.internationalgenome.org/data-portal/sample/HG00114 ; is this appropriate?*
+- Nat: Our paper is to be in the Nature Bioinformatics format right?
 - Nat: I'm finding a hard time figuring out where exactly compression is happening in the Scalce source code (for reads).
 - Nat: can Ibrahim compare and contrast, in Scalce, the compression method used for reads and the one used for quality scores? *Is our project essentially trying to adapt the loss-less method used for reads to quality scores, using flow-cell etc. info?*
-
-- Nat: Sample data. I grabbed some human genome data from https://www.internationalgenome.org/data-portal/sample/HG00114 ; is this appropriate?
+- Nat: FastQC? Anything useful in there?
 
 
 

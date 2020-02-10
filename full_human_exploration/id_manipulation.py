@@ -1,34 +1,7 @@
-# Nat's Semi-Private Notes
-
-Just some ill-formed notes to myself
-
-## Nice to haves?
-
-- Extract first n fastq records from a large file
-
-```bash
-seqkit head -n 1000 <large fastq file> > thousand_records.fastq
-```
-
-- Convert a large .fastq file to quality_scores.txt, identifiers.txt
-
-```bash
-awk 'NR % 4 == 0' <large fastq file> > quality_scores.txt
-awk 'NR % 4 == 1' <large fastq file> > identifiers.txt
-```
-
-- Convert quality scores to integers, write them to a text file, plot them
-
-```python
-# In file quality_scores/quap.py
-writeQualityScores("quality_scores.txt",'converted_quality_scores.txt')
-plotFromConverted("converted_quality_scores.txt", 0, 100)
-```
-- Parse identifiers and make text files for analytics
-
-```python
-# Setup
+#!/usr/bin/env python3
 import sys
+import numpy as np
+import matplotlib.pyplot as plt
 import re
 import os
 import shutil
@@ -121,21 +94,3 @@ def reassembleIdentifiers():
 result = splitIdentifiers('identifiers.txt')
 writeIdentifiers(result)
 # reassembleIdentifiers() # Can do this to check parsing didn't mess up the files
-```
-
-
-
-## ToDo
-
-- Which identifier components should we use? Which can we throw out, they're useless? 
-- Do a quick sanity check on identifier components to explore their properties.
-	1) Is name & instrument the same for all identifiers?
-	2) Are all their lengths equal?
-
-
-
-
-
-
-
-
