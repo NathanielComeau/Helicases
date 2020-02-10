@@ -131,6 +131,7 @@ writeIdentifiers(result)
 - Do a quick sanity check on identifier components to explore their properties.
 	1) Is name & instrument the same for all identifiers?
 	2) Are all their lengths equal?
+- Understand move to front, run length, arithmetic encoding.
 
 
 
