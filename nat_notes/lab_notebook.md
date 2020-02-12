@@ -2,7 +2,7 @@
 
 This is my notebook where I write down what I tried so other people can follow in my footsteps.
 
-## Nat's work on weekend of Feb 8th
+## Playing with scalce and initial explorations
 
 Summary: I started to explore quality score data from a sample fastq file. Try running "cd quality_scores; python3 qa_manipulation.py" to see some pretty plots of quality scores from 1, 10, and 100 reads.
 
@@ -220,4 +220,262 @@ y_coord  :
 2520
 15336
 ```
+
+### Attempts to extract identifiers and qa from full human genome
+
+- Tried to do it using Python; failed when it tried to use 12GB of RAM. Although it wrote 600,000 of the identifiers before failing; maybe some small optimizations are all that's needed to do it straight from Python?
+
+```python
+# In file quality_scores/quap.py
+writeQualityScores("quality_scores.txt",'converted_quality_scores.txt')
+plotFromConverted("converted_quality_scores.txt", 0, 100)
+```
+
+```python
+```python
+# Setup
+import sys
+import re
+import os
+import shutil
+
+def splitIdentifiers(idFile):
+    with open(idFile, 'r') as f:
+        identifiers = f.readlines()
+    identifiers = [x.rstrip('\n') for x in identifiers]
+
+    # example id: @ERR013138.1 IL39_4668:5:1:1035:1408/1
+    # Splits into name, instrument, flow_cell_lane, flow_cell_number, x_coord, y_coord
+    # Regex pattern1 based on https://en.wikipedia.org/wiki/FASTQ_format#Illumina_sequence_identifiers: 
+    #               (\@\w*.\d+)\s(\w+):(\d+):(\d+):(\d+):(\d+)(#\d+)*\/(\d+)$
+    #               https://regex101.com/r/RnuEOJ/3
+    p = re.compile(r'(\@\w*.\d+)\s(\w+):(\d+):(\d+):(\d+):(\d+)(#\d+)*\/(\d+)$')
+    id_components = {"whole_identifier":[],
+              "names":[], 
+              "instrument":[], 
+              "flow_cell_lane": [],
+              "flow_cell_number": [],
+              "x_coord": [],
+              "y_coord": [],
+              #"index_number": [],
+              "pair_member": []
+              }
+
+    for ident in identifiers:
+        #print(ident)
+        match = p.match(ident)
+        if not match:
+            print("ERROR: Pattern matching failed on identifiers!")
+            sys.exit()
+        id_components["whole_identifier"].append(match.group(0))
+        id_components["names"].append(match.group(1))
+        id_components["instrument"].append(match.group(2))
+        id_components["flow_cell_lane"].append(match.group(3))
+        id_components["flow_cell_number"].append(match.group(4))
+        id_components["x_coord"].append(match.group(5))
+        id_components["y_coord"].append(match.group(6))
+        #id_components["index_number"].append(match.group(7))
+        id_components["pair_member"].append(match.group(8))
+    
+    # print first 5 id components to make sure we did it right
+    # for key in id_components:
+    #     print(key, ' : ')
+    #     for i in range(5):
+    #         print(id_components[key][i])
+    #     print()
+    return id_components
+
+def writeIdentifiers(id_components):
+    # Write components of identifiers to individual text files in a new directory 
+    # Make a new directory to hold our files
+    dirName = 'identifierComponents'
+    try:
+        os.mkdir(dirName)
+    except FileExistsError:
+        shutil.rmtree(dirName)
+        os.mkdir(dirName)
+
+    for key in id_components:
+        with open('identifierComponents/'+key+'.txt', 'w') as f:
+            for item in id_components[key]:
+                f.write(item+'\n')
+
+def reassembleIdentifiers():
+    # Just a quick sanity check that I parsed identifiers properly
+    id_components = {"whole_identifier":[],
+              "names":[], 
+              "instrument":[], 
+              "flow_cell_lane": [],
+              "flow_cell_number": [],
+              "x_coord": [],
+              "y_coord": [],
+              #"index_number": [],
+              "pair_member": []
+              }
+    for key in id_components:
+        with open('identifierComponents/'+key+'.txt', 'r') as f:
+            lines = f.readlines()
+
+        lines = [x.rstrip('\n') for x in lines]
+        id_components[key] = lines
+
+    with open('reassembled.txt', 'w') as f:
+        for i in range(len(id_components["names"])):
+            # example id: @ERR013138.1 IL39_4668:5:1:1035:1408/1
+            f.write(f'{id_components["names"][i]} {id_components["instrument"][i]}:{id_components["flow_cell_lane"][i]}:{id_components["flow_cell_number"][i]}:{id_components["x_coord"][i]}:{id_components["y_coord"][i]}/{id_components["pair_member"][i]}\n')
+
+result = splitIdentifiers('identifiers.txt')
+writeIdentifiers(result)
+# reassembleIdentifiers() # Can do this to check parsing didn't mess up the files
+```
+```
+
+- Maybe we can do it in bash somehow?
+
+- Fuck me, that was annoying. Doing it in awk seems to use a constant amount of memory (~ 400 KB):
+
+```bash
+awk -F'[ .:#/]' '{print $1, $2, $3, $4, $5, $6, $7, $8}' identifiers.txt
+
+# This doesn't work for some reason...?
+#awk -F'[ .:#/]' '{print $1 > "read_name.txt" print $2 > read_number.txt}' identifiers.txt
+
+# Fine, we'll do it iteratively the old fashioned way:
+echo "Starting names"
+awk -F'[ .:#/]' '{print $1}' identifiers.txt > read_names.txt
+echo "Starting numbers"
+awk -F'[ .:#/]' '{print $2}' identifiers.txt > read_numbers.txt
+echo "Starting instruments"
+awk -F'[ .:#/]' '{print $3}' identifiers.txt > instrument_names.txt
+echo "Starting lanes"
+awk -F'[ .:#/]' '{print $4}' identifiers.txt > flow_cell_lanes.txt
+echo "Starting tile numbers"
+awk -F'[ .:#/]' '{print $5}' identifiers.txt > tile_numbers.txt
+echo "Starting x_coords"
+awk -F'[ .:#/]' '{print $6}' identifiers.txt > x_coords.txt
+echo "Starting y_coords"
+awk -F'[ .:#/]' '{print $7}' identifiers.txt > y_coords.txt
+# We could try to grab the index number / paired end info as well, fuck that for now 
+#awk -F'[ .:#/]' '{print $8}' identifiers.txt > paired_ends.txt
+
+```
+- Testing it on whole genomes. Started at 11:56 am. Only using 388 kb of memory.
+- Fuck yeah!! Took about a minute to finish one field!! We're in business. Took ~ 10, 15 minutes to finish.
+- Gonna polish it into a shell script that spits out fields into a new directory, identifierComponents, and is used like:
+
+```bash
+./parseidentifiers identifiers.txt
+```
+
+```bash
+#!/bin/bash
+
+# Check that a filename was given
+if [ -n "$1" ];
+then
+    echo "Parsing $1"
+else
+    echo "Usage: $0 <identifier file"
+    exit 1
+fi
+
+# If directory identifierComponents exists, remove it and its contents
+if [ -d "identifierComponents" ]; then
+  rm -r "identifierComponents"
+fi
+mkdir "identifierComponents"
+
+# Extract each identifier field to a separate text file
+echo "Starting read names"
+awk -F'[ .:#/]' '{print $1}' $1 > identifierComponents/read_names.txt
+echo "Starting read numbers"
+awk -F'[ .:#/]' '{print $2}' $1 > identifierComponents/read_numbers.txt
+echo "Starting instrument names"
+awk -F'[ .:#/]' '{print $3}' $1 > identifierComponents/instrument_names.txt
+echo "Starting flow cell lanes"
+awk -F'[ .:#/]' '{print $4}' $1 > identifierComponents/flow_cell_lanes.txt
+echo "Starting tile numbers"
+awk -F'[ .:#/]' '{print $5}' $1 > identifierComponents/tile_numbers.txt
+echo "Starting x_coords"
+awk -F'[ .:#/]' '{print $6}' $1 > identifierComponents/x_coords.txt
+echo "Starting y_coords"
+awk -F'[ .:#/]' '{print $7}' $1 > identifierComponents/y_coords.txt
+echo "Done!"
+```
+
+
+### Converting large amounts of quality scores to integers
+
+- Not sure how. Did some bash/sed googling and found nothing easy. Do we even need this?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Nat's Notes to Himself
+
+Just some ill-formed notes to myself
+
+## Nice to Haves
+
+
+
+
+## Immediate ToDos
+
+- Got some good identifier field extractions in /Users/nat/research/Helicases/scratch/identifierComponents . Why not run some basic analytics on each of those text files? See what values they take on, frequencies, averages, periodicities, etc.
+
+- Extract all quality scores from that full genome
+
+- Essentially we want to see how those quality scores correlate with identifier fields.
+
+
+
+
+
+## Eventual things to get around to
+
+- k-means clustering
+- Which identifier components should we use? Which can we throw out, they're useless? 
+- Do a quick sanity check on identifier components to explore their properties.
+    1) Is name & instrument the same for all identifiers?
+    2) Are all their lengths equal?
+- Understand move to front, run length, arithmetic encoding.
+
+
+
+
+
+## Crazy Ideas and Notes
+
+- Can we use NA12878 and GIAB to validate any of these results?
+
+
+
+
+
+
+
+
+
+
+
+
+
 
