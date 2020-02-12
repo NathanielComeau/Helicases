@@ -464,6 +464,9 @@ Just some ill-formed notes to myself
 
 ## Crazy Ideas and Notes
 
+
+- What does the best possible input to gzip look like? Can we find an optimal ordering of reads, 
+
 - Can we use NA12878 and GIAB to validate any of these results?
 
 
