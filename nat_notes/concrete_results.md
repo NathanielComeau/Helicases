@@ -1,8 +1,4 @@
-# Nat's Semi-Private Notes
-
-Just some ill-formed notes to myself
-
-## Nice to haves?
+## Concrete Results
 
 - Extract first n fastq records from a large file
 
@@ -18,6 +14,10 @@ awk 'NR % 4 == 1' <large fastq file> > identifiers.txt
 ```
 
 - Convert quality scores to integers, write them to a text file, plot them
+
+<aside class="warning">
+This is too slow for 3 GB full human genome files.
+</aside>
 
 ```python
 # In file quality_scores/quap.py
@@ -122,24 +122,3 @@ result = splitIdentifiers('identifiers.txt')
 writeIdentifiers(result)
 # reassembleIdentifiers() # Can do this to check parsing didn't mess up the files
 ```
-
-
-
-## ToDo
-
-- k-means clustering
-- Which identifier components should we use? Which can we throw out, they're useless? 
-- Do a quick sanity check on identifier components to explore their properties.
-	1) Is name & instrument the same for all identifiers?
-	2) Are all their lengths equal?
-- Understand move to front, run length, arithmetic encoding.
-
-
-
-## Crazy Ideas and Notes
-
-- Can we use NA12878 and GIAB to validate any of these results?
-
-
-
-

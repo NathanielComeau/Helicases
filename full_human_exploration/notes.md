@@ -1,0 +1,1 @@
+- Nat: With the full human genome, I tried to extract identifier fields using python. That went badly and crashed after Python tried to use 12 GB of RAM.
