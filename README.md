@@ -46,5 +46,7 @@ Tried to follow the instructions https://github.com/sfu-compbio/compression-benc
 
 , got as far as vagrant up before erroring out because of an "image not found" error.
 
+## Random Things Nat Learned
 
+- It turns out read lengths are not always 100 bp long. Who would have thunk it!
 

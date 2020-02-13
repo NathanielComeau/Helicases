@@ -417,6 +417,98 @@ echo "Done!"
 
 
 
+### Analysis of Identifier Files
+
+- Extracted identifier fields from "ERR013138_1.fastq" with awk
+- 30,003,628 identifiers in total
+
+```bash
+In [6]: ls -lh                                                                  
+total 2684616
+-rw-r--r--  1 nat  staff    57M 12 Feb 12:37 flow_cell_lanes.txt
+-rw-r--r--  1 nat  staff   286M 12 Feb 12:35 instrument_names.txt
+-rw-r--r--  1 nat  staff   315M 12 Feb 12:32 read_names.txt
+-rw-r--r--  1 nat  staff   247M 12 Feb 12:34 read_numbers.txt
+-rw-r--r--  1 nat  staff    89M 12 Feb 12:39 tile_numbers.txt
+-rw-r--r--  1 nat  staff   158M 12 Feb 12:41 x_coords.txt
+-rw-r--r--  1 nat  staff   159M 12 Feb 12:42 y_coords.txt
+```
+
+- flow_cell_lanes.txt: everything equaled 5.
+- instrument_names.txt: everything equaled 'IL39_4668'.
+- read_names.txt: everything equaled '@ERR013138'
+- read_numbers.txt: just a bunch of indices from 1 to the total number of reads (30,003,628)
+
+- *tile_numbers.txt*: Holy shit, it's a quadratic or something!! See tile_number_frequencies1.png or tile_number_frequencies2.png for reference.
+
+- x_coords:
+- y_coords:
+
+
+
+- Both x and y plotted together:
+    - HA! First try, it turned into a huge brick. Meaning I think they look to be pretty uniformly distributed over a rectangular range.
+    - Second attempt showed distribution to be a rounded edge rectangle, was still too slow to really manipulate it.
+    - Let's see if it's uniform over the x and y range? *However, I'm not entirely convinced uniformity in the frequency diagrams means uniformity in the distributions of the data.* Let's leave this for now.
+
+    - HEYYO, let's try to do it with Gaussian filtering!!
+
+    - Got some pretty results:
+
+
+
+
+
+
+
+
+
+
+
+
+- **IDEA: Plot average quality score as a function of x and y!!!!!**
+
+### Plotting quality scores as a function of x and y
+
+- Yo, maybe let's start with just 1000 reads to keep things simple.
+
+```bash
+seqkit head -n 100000 ERR013138_1.fastq > little.fastq
+
+```
+_ *Huh, turns out read lengths are not always 100 bp? I was assuming that, weird*
+
+- I spot checked some of the quality scores by plotting them with qa_manipulation.py. They maybe had a little bit of locality when I plotted 10 at a time randomly sampled. *Maybe there's potential for ordering similar quality scores with a little bit of loss to make them highly compressible?* Eg, take all quality scores that slope downward to the right in a similar way, group them (fuzz with a little bit of loss?) and try to compress them.
+
+- Calculated average quality scores and saved them in a text file as 'average_quality_scores.txt'
+
+- Extracted identifier fields and moved x and y coordinates into appropriate directory
+
+```bash
+cp ../../scripts/parseidentifiers.sh ./
+./parseidentifiers.sh identifiers.txt 
+mv identifierComponents/x_coords.txt ./
+mv identifierComponents/y_coords.txt ./
+```
+
+- Holy shit, not sure where this is going. See x_and_y_explorations.ipynb for details.
+
+- **Need to come back and actually plot quality scores as a function of x and y**
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -441,6 +533,17 @@ Just some ill-formed notes to myself
 
 - Got some good identifier field extractions in /Users/nat/research/Helicases/scratch/identifierComponents . Why not run some basic analytics on each of those text files? See what values they take on, frequencies, averages, periodicities, etc.
 
+    - **Why is the frequency count distorted for the tile numbers?** See tile_number_frequencies1.png or tile_number_frequencies2.png
+    - Are the x and y coordinates truly uniformly distributed in a rounded rectangle? I could make a big plot (takes time, doesn't find subtle non-uniformity). I could check that the average distance between points equals the expected distance between points (fucking hard to do computationally, might not catch small variations either). Maybe make a big-ass plot and go from there... How to figure out of something is uniformly distributed?
+
+
+- Do some more fun plotting of x and y coordinates with filters. Try to figure out if x and y are truly uniform (possibly a 2d standard deviation or something?). Nearest neighbours?
+
+- Try to plot x and y, with colour representing average quality score. Do it again for median quality score. Maybe you'll have to try a weird binning/filtering thing with it.
+
+
+- Finish exploring x_coords.txt and y_coords.txt
+
 - Extract all quality scores from that full genome
 
 - Essentially we want to see how those quality scores correlate with identifier fields.
@@ -452,7 +555,9 @@ Just some ill-formed notes to myself
 ## Eventual things to get around to
 
 - k-means clustering
-- Which identifier components should we use? Which can we throw out, they're useless? 
+- Which identifier components should we use? Which can we throw out, they're useless?
+    - Probably can throw out cell lanes, instrument names, read names, most of read numbers.
+    - Only interesting values are x, y, flow tile. 
 - Do a quick sanity check on identifier components to explore their properties.
     1) Is name & instrument the same for all identifiers?
     2) Are all their lengths equal?
@@ -468,6 +573,13 @@ Just some ill-formed notes to myself
 - What does the best possible input to gzip look like? Can we find an optimal ordering of reads, 
 
 - Can we use NA12878 and GIAB to validate any of these results?
+
+
+- Crazy data vizualization ideas:
+
+  - [Awesome Gaussian filtering to determine nearest neighbors](https://stackoverflow.com/questions/2369492/generate-a-heatmap-in-matplotlib-using-a-scatter-data-set)
+  - [More general issues plotting large data sets](https://stackoverflow.com/questions/4082298/scatter-plot-with-a-huge-amount-of-data)
+
 
 
 

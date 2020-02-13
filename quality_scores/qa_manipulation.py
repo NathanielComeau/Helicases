@@ -61,3 +61,4 @@ def plotFromConverted(qaFile, i, j):
 plotFromConverted("converted_quality_scores.txt", 0, 1)
 plotFromConverted("converted_quality_scores.txt", 0, 10)
 plotFromConverted("converted_quality_scores.txt", 0, 100)
+plotFromConverted("converted_quality_scores.txt", 0, 1000)

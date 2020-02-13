@@ -17,7 +17,7 @@ awk 'NR % 4 == 1' <large fastq file> > identifiers.txt
 - script is in scripts/ directory.
 
 ```bash
-./parseidentifiers identifiers.txt
+./parseidentifiers.sh identifiers.txt
 ```
 
 - Convert quality scores to integers, write them to a text file, plot them
