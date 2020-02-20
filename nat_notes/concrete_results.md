@@ -36,4 +36,12 @@ plotFromConverted("converted_quality_scores.txt", 0, 100)
 paste quality_scores.txt identifierComponents/flow_cell_lane.txt identifierComponents/flow_cell_number.txt identifierComponents/x_coord.txt identifierComponents/y_coord.txt > side_by_side.txt
 ```
 
+- Extract average quality scores from a fastq file
+
+**This doesn't work for full human genome files**
+From scripts directory:
+```bash
+python extract_average_qas.py <fastq file> <output file>
+```
+
 

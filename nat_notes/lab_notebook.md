@@ -441,10 +441,8 @@ total 2684616
 
 - *tile_numbers.txt*: Holy shit, it's a quadratic or something!! See tile_number_frequencies1.png or tile_number_frequencies2.png for reference.
 
-- x_coords:
-- y_coords:
-
-
+- x_coords: **Finish this**
+- y_coords: **Finish this**
 
 - Both x and y plotted together:
     - HA! First try, it turned into a huge brick. Meaning I think they look to be pretty uniformly distributed over a rectangular range.
@@ -454,17 +452,6 @@ total 2684616
     - HEYYO, let's try to do it with Gaussian filtering!!
 
     - Got some pretty results:
-
-
-
-
-
-
-
-
-
-
-
 
 - **IDEA: Plot average quality score as a function of x and y!!!!!**
 
@@ -495,12 +482,26 @@ mv identifierComponents/y_coords.txt ./
 
 - **Need to come back and actually plot quality scores as a function of x and y**
 
+- Maybe I can weight x,y points by multiplying them by their average quality score? So if a point has a quality score of 16, we'd add 16 copies of that score to the diagram...
+
+- Tried to do this in x_y_and_average_qa_exploration.ipynb. Didn't really see much in the plots. I think differences in x and y density are wiping out differences in quality scores. Trying to normalize x and y in two dimensions feels really messy. Picture a 3d field of points (x, y, quality score) as well. I feel like with all the smoothing we're doing (averaging, binning, gaussian smoothing), we really won't pick up on correlations of qa and x, y before doing some clustering.
+
+- **Try 3d surface map, topographical map?**
+
+
+- Made a figure trying to subtract one from the other; gotta interpret that at some point. **Try doing it again for the whole human genome**
+
+- [Binned statistics might be useful! Both 1D and 2D](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.binned_statistic.html)
+
+- I binned the 100,000 records file, wasn't really looking good for 1000 bins but made a figure with various sigma levels and 10,50,100 bins. Saved the figure in figures. Gaussian smoothing seems to be doing weird shit to it for small numbers of bins.
 
 
 
+### K-means clustering of quality scores
 
+So far I have 3d data (x, y, average quality score). Nothing super obvious in terms of corelations popped up when I tried to plot it but I might have been binning super shittily (probably?). 
 
-
+- Started exploration with first 100,000 x-coords, y-coords, average qas.
 
 
 
@@ -531,16 +532,9 @@ Just some ill-formed notes to myself
 
 ## Immediate ToDos
 
-- Got some good identifier field extractions in /Users/nat/research/Helicases/scratch/identifierComponents . Why not run some basic analytics on each of those text files? See what values they take on, frequencies, averages, periodicities, etc.
-
-    - **Why is the frequency count distorted for the tile numbers?** See tile_number_frequencies1.png or tile_number_frequencies2.png
-    - Are the x and y coordinates truly uniformly distributed in a rounded rectangle? I could make a big plot (takes time, doesn't find subtle non-uniformity). I could check that the average distance between points equals the expected distance between points (fucking hard to do computationally, might not catch small variations either). Maybe make a big-ass plot and go from there... How to figure out of something is uniformly distributed?
-
-
 - Do some more fun plotting of x and y coordinates with filters. Try to figure out if x and y are truly uniform (possibly a 2d standard deviation or something?). Nearest neighbours?
 
-- Try to plot x and y, with colour representing average quality score. Do it again for median quality score. Maybe you'll have to try a weird binning/filtering thing with it.
-
+- Try to plot the full human genome x, y, quality score
 
 - Finish exploring x_coords.txt and y_coords.txt
 
@@ -549,6 +543,16 @@ Just some ill-formed notes to myself
 - Essentially we want to see how those quality scores correlate with identifier fields.
 
 
+### Shelved
+
+- Try to plot x and y, with colour representing average quality score. Do it again for median quality score. Maybe you'll have to try a weird binning/filtering thing with it.
+
+	- This felt really messy; I might need to find a way to normalize in x and y to do this right. There probably is a good way to visualize this 3d data (x, y, average quality score), I'm just not quite sure how to bin it yet.
+
+- Got some good identifier field extractions in /Users/nat/research/Helicases/scratch/identifierComponents . Why not run some basic analytics on each of those text files? See what values they take on, frequencies, averages, periodicities, etc.
+
+    - **Why is the frequency count distorted for the tile numbers?** See tile_number_frequencies1.png or tile_number_frequencies2.png
+    - Are the x and y coordinates truly uniformly distributed in a rounded rectangle? I could make a big plot (takes time, doesn't find subtle non-uniformity). I could check that the average distance between points equals the expected distance between points (fucking hard to do computationally, might not catch small variations either). Maybe make a big-ass plot and go from there... How to figure out of something is uniformly distributed?
 
 
 
@@ -577,8 +581,18 @@ Just some ill-formed notes to myself
 
 - Crazy data vizualization ideas:
 
+  - [Cool contour plots](https://plot.ly/python/3d-surface-plots/)
+  - Try to do some kind of surface plots?
+  - Voronoi diagrams
+
   - [Awesome Gaussian filtering to determine nearest neighbors](https://stackoverflow.com/questions/2369492/generate-a-heatmap-in-matplotlib-using-a-scatter-data-set)
   - [More general issues plotting large data sets](https://stackoverflow.com/questions/4082298/scatter-plot-with-a-huge-amount-of-data)
+
+
+- K-means clustering ideas
+    - [How to pick k for k-means](https://www.quora.com/How-can-we-choose-a-good-K-for-K-means-clustering)
+    - [scikit-learn k-means](https://scikit-learn.org/stable/modules/clustering.html#k-means)
+    - [Voronoi diagrams?](https://docs.scipy.org/doc/scipy-0.18.1/reference/generated/scipy.spatial.Voronoi.html)
 
 
 
