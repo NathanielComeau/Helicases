@@ -38,10 +38,16 @@ paste quality_scores.txt identifierComponents/flow_cell_lane.txt identifierCompo
 
 - Extract average quality scores from a fastq file
 
-**This doesn't work for full human genome files**
 From scripts directory:
 ```bash
 python extract_average_qas.py <fastq file> <output file>
+```
+
+- Extract median quality scores from a fastq file
+
+From scripts directory:
+```bash
+python extract_median_qas.py <fastq file> <output file>
 ```
 
 
