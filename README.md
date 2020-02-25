@@ -10,7 +10,7 @@
 
 # BLOCKAGES: Where we need help from Ibrahim
 
-- *Nat: Sample data. I grabbed some human genome data from https://www.internationalgenome.org/data-portal/sample/HG00114 ; is this appropriate?*
+- Nat: I found a conference proceeding link claiming to do something similar to what you're trying to do, but I can't actually find the conference proceedings anywhere. Can someone help me find them?
 - Nat: Our paper is to be in the Nature Bioinformatics format right?
 - Is our project looking for dead cameras, etc and compressing based on that? Re-ordering quality scores, or a combination of the two? **Big Picture Help.**
 - More of the same question: Is this problem just re-ordering the quality scores in the best possible way? Is this a separate problem than looking for broken cameras, etc and compressing based on that? Nat: can Ibrahim compare and contrast, in Scalce, the compression method used for reads and the one used for quality scores? *Is our project essentially trying to adapt the loss-less method used for reads to quality scores, using flow-cell etc. info?*
