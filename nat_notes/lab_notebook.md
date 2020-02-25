@@ -491,7 +491,11 @@ mv identifierComponents/y_coords.txt ./
 
 - Made a figure trying to subtract one from the other; gotta interpret that at some point. **Try doing it again for the whole human genome**
 
-- [Binned statistics might be useful! Both 1D and 2D](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.binned_statistic.html)
+- [Binned statistics were pretty cool! Both 1D and 2D](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.binned_statistic.html) . With ERR013138_1.fastq, I extracted x, y, and quality scores and used the scipy binned statistics modules to create some figures exploring average quality score as a function of x and y. See big_x_y_qa_analysis.ipynb for details. Made 3 figures: 
+
+    - full_genome_x_and_y_and_qa_average_binning_smoothing.png
+    - full_genome_x_and_y_and_qa_medianing_binning_smoothing.png
+    - full_genome_x_and_y_counts_binning.png
 
 - I binned the 100,000 records file, wasn't really looking good for 1000 bins but made a figure with various sigma levels and 10,50,100 bins. Saved the figure in figures. Gaussian smoothing seems to be doing weird shit to it for small numbers of bins.
 
@@ -525,6 +529,22 @@ So far I have 3d data (x, y, average quality score). Nothing super obvious in te
 
 Just some ill-formed notes to myself
 
+
+## Big Picture
+
+I think I'm starting to see what the big picture is.
+    - Use a different model for a particular x,y/flow cell lane/tile "chunk". If we can cluster quality scores by those chunks effectively, we're golden.
+
+To figure out how to chunk, I think we need to do the binning analysis again on some of the test datasets Ibrahim provided.
+
+Following that (or possibly in tandem) we'll need to try clustering this data with something like k-means. **Question: how else can we try and cluster this data?**
+
+Efficient implementation will be a pain (?).
+
+Paper writing will be cool. Good to see there is similar literature out there.
+
+
+
 ## Nice to Haves
 
 
@@ -532,13 +552,18 @@ Just some ill-formed notes to myself
 
 ## Immediate ToDos
 
+- Redo binning and plotting of average quality score as a function of x and y for Ibrahim's data.
+
+- Mayyyybbbeee try to visualize data as a data cube / butterfly plot?
+
+- Try to understand arithmetic coders a little better, including (?) the one used by Samcomp. I would like to build a simple one that reads two streams, data and 1's or 0's, that switches between two models based on the 1's and 0's stream.
+
+
+
+
 - Do some more fun plotting of x and y coordinates with filters. Try to figure out if x and y are truly uniform (possibly a 2d standard deviation or something?). Nearest neighbours?
 
-- Try to plot the full human genome x, y, quality score
-
 - Finish exploring x_coords.txt and y_coords.txt
-
-- Extract all quality scores from that full genome
 
 - Essentially we want to see how those quality scores correlate with identifier fields.
 
@@ -558,6 +583,8 @@ Just some ill-formed notes to myself
 
 ## Eventual things to get around to
 
+- What if we plot flow cell lane/ tiles with x and y? Can that explain some of the structure we see in quality score as a function of x and y?
+
 - k-means clustering
 - Which identifier components should we use? Which can we throw out, they're useless?
     - Probably can throw out cell lanes, instrument names, read names, most of read numbers.
@@ -568,11 +595,17 @@ Just some ill-formed notes to myself
 - Understand move to front, run length, arithmetic encoding.
 
 
+## Done
 
+- Try to plot the full human genome x, y, quality score
+    - Done, need to redo it for Ibrahim's samples. Does it scale to 17 GB?
 
 
 ## Crazy Ideas and Notes
 
+
+
+- Turn each set of x, y, quality scores into a data cube!!! Where the 3rd axis is quality score.
 
 - What does the best possible input to gzip look like? Can we find an optimal ordering of reads, 
 
