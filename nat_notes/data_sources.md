@@ -60,7 +60,7 @@ All reference files should be pre-processed with `ref.py`, as explained in the [
 [ERR174337](ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR174/ERR174337/ERR174337_1.fastq.gz)  (16.0 GB) <br>  
 [ERR174338](ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR174/ERR174338/ERR174338_1.fastq.gz)  (16.0 GB) <br> 
 [ERR174339](ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR174/ERR174339/ERR174339_1.fastq.gz)  (15.6 GB) <br> 
-[ERR174340](ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR174/ERR174340/ERR174340_1.fastq.gz)  (11.2 GB) <br> 
+[ERR174340](ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR174/ERR174340/ERR174340_1.fastq.gz)  (11.2 GB) <br> **Nat- also started downloading this one because it's smallest**
 [ERR174341](ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR174/ERR174341/ERR174341_1.fastq.gz)  (14.8 GB) <br> 
 Total 284.6 GB
 [hg19](http://hgdownload.cse.ucsc.edu/goldenpath/hg19/bigZips/chromFa.tar.gz) 

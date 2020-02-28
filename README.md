@@ -10,7 +10,10 @@
 
 # BLOCKAGES: Where we need help from Ibrahim
 
-- Nat: I found a conference proceeding link claiming to do something similar to what you're trying to do, but I can't actually find the conference proceedings anywhere. Can someone help me find them?
+- Nat: I found a conference proceeding link claiming to do something similar to what we're trying to do, but I can't actually find the conference proceedings anywhere. Can someone help me find them?
+- Nat, maybe for Ashley? **Do we know which identifier field is which in the sample data Ibrahim gave us? Can Ashley double check the format of identifier fields?** Might be possible to figure this out by reading the "recommended-fastq" paper from 482c. We could maybe ask Ibrahim as well.
+- Nat: can we learn something from previous work in quality score recalibration? Maybe there are some good insights there that we can use in making our model. This would involve looking up papers on quality score recalibration and asking Ibrahim if he has some guidance for where to start.
+- Nat: How does Samcomp's model work?
 - Nat: Our paper is to be in the Nature Bioinformatics format right?
 - Is our project looking for dead cameras, etc and compressing based on that? Re-ordering quality scores, or a combination of the two? **Big Picture Help.**
 - More of the same question: Is this problem just re-ordering the quality scores in the best possible way? Is this a separate problem than looking for broken cameras, etc and compressing based on that? Nat: can Ibrahim compare and contrast, in Scalce, the compression method used for reads and the one used for quality scores? *Is our project essentially trying to adapt the loss-less method used for reads to quality scores, using flow-cell etc. info?*

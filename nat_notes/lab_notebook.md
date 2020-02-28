@@ -417,7 +417,7 @@ echo "Done!"
 
 
 
-### Analysis of Identifier Files
+### Analysis of Preliminary Identifier Files
 
 - Extracted identifier fields from "ERR013138_1.fastq" with awk
 - 30,003,628 identifiers in total
@@ -500,6 +500,60 @@ mv identifierComponents/y_coords.txt ./
 - I binned the 100,000 records file, wasn't really looking good for 1000 bins but made a figure with various sigma levels and 10,50,100 bins. Saved the figure in figures. Gaussian smoothing seems to be doing weird shit to it for small numbers of bins.
 
 
+### Analysis of Ibrahim's large (10-17GB) human genome fastq files
+
+- Downloaded ERR174325_1.fastq.gz from [deez](https://github.com/sfu-compbio/compression-benchmark/blob/master/samples.md)
+    - HA! I didn't even have enough disk space on my laptop to decompress it. Let's get access to a new machine soon...
+
+- Trying with a slightly smaller file (11GB) ERR174340_1.fastq.gz, hopefully this will work.
+
+- Decompressed with gzip -d ERR174340_1.fastq.gz -c > ERR174340_1.fastq
+    - **Failed after unpacking 19 GB.**
+    - Tried decompressing to my hard drive; it worked, but only after unpacking 36 GB!!
+
+- Extracted quality scores and identifiers
+    - started quality scores at 10:38am: awk 'NR % 4 == 0' /Volumes/Marvin/ERR174340_1.fastq > quality_scores.txt
+    - Finished at 11:16am, with final size of 14GB
+    - started identifiers at 11:19am with awk 'NR % 4 == 1' /Volumes/Marvin/ERR174340_1.fastq > identifiers.txt.
+    - Finished at 11:56am, with final size of 7.3GB
+
+
+- Parsed identifiers with "./parseidentifiers.sh identifiers.txt"
+    - Started around 1:15pm, took until 2:30pm to finish
+
+- Analysis of identifier fields
+    - **Did I even split these apart correctly? Need to double check that my assumptions for the  regex are correct (that the regex is semantically correct).**
+    - Read names seemed to all be the same... Leaving those aside for now.
+    - Same for instrument names... Leaving those aside for now.
+    - Read numbers are monotonically increasing; I checked with a cpp and also with a bash script. Leaving them be for now.
+    - flow_cell_lanes: every single value is 3. Leaving them for now.
+    - tile_numbers: seems to be monotonically increasing as a function of read_number. [Here's the output from searching linearly for the max from the start to the end of tile_numbers.txt](snips/freq.md). There might be interesting stuff in here; I should plot frequencies and tile_number as functions of read_number, x_coord, and y_coord at some point.
+        - The max was 2308, min 1101.
+        - Frequencies looked like [this.](snips/2.md)
+
+    - x_coords: max was 21403, min was 1000.
+        - Frequencies looked like [this.](snips/3.md)
+    - y_coords: max was 200940, min was 2073.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+*Maybe I'll have to mosaic to be able to make the plots?* That would make things much, much easier than trying to devise a clever way to load things into memory all at once.
 
 ### K-means clustering of quality scores
 
@@ -552,6 +606,8 @@ Paper writing will be cool. Good to see there is similar literature out there.
 
 ## Immediate ToDos
 
+- **Is my parsing (my regex) of identifier fields correct?**
+
 - Redo binning and plotting of average quality score as a function of x and y for Ibrahim's data.
 
 - Mayyyybbbeee try to visualize data as a data cube / butterfly plot?
@@ -583,6 +639,8 @@ Paper writing will be cool. Good to see there is similar literature out there.
 
 ## Eventual things to get around to
 
+- Look up papers on quality score recalibration, maybe something in there is useful to us.
+
 - What if we plot flow cell lane/ tiles with x and y? Can that explain some of the structure we see in quality score as a function of x and y?
 
 - k-means clustering
@@ -606,6 +664,7 @@ Paper writing will be cool. Good to see there is similar literature out there.
 
 
 - Turn each set of x, y, quality scores into a data cube!!! Where the 3rd axis is quality score.
+    - Are x and y coordinates unique? I'm just wondering how I'll convert everything to a rectangular grid to make a data cube out of them.
 
 - What does the best possible input to gzip look like? Can we find an optimal ordering of reads, 
 
