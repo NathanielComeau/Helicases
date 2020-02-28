@@ -46,6 +46,7 @@ python extract_average_qas.py <fastq file> <output file>
 *Still fairly untested, but should work well. Let me know how it goes!*
 
 With a bash script from the scripts directory (should work for all files including large ones):
+
 ```bash
 chmod +x bash_extract_average_qas # Make script executable, needed the first time it's run
 ./bash_extract_average_qas.sh <fastq file> > <output file>
@@ -92,6 +93,16 @@ With c++, from scripts/cpp directory:
 g++ -std=c++17 minmax.cpp -o out
 ./out 
 
+```
+
+- Calculate frequencies of values occuring in a large text file
+
+I did this with c++ and checked that it produced the same results as the version I wrote in Python (now in an iPython notebook somewhere...). Input should be one integer per line.
+
+With c++, from scripts/cpp directory:
+```bash
+g++ freaks.cpp -std=c++17 -o out # Compile the first time using
+./out <input file>
 ```
 
 

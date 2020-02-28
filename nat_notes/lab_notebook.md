@@ -529,16 +529,42 @@ mv identifierComponents/y_coords.txt ./
     - flow_cell_lanes: every single value is 3. Leaving them for now.
     - tile_numbers: seems to be monotonically increasing as a function of read_number. [Here's the output from searching linearly for the max from the start to the end of tile_numbers.txt](snips/freq.md). There might be interesting stuff in here; I should plot frequencies and tile_number as functions of read_number, x_coord, and y_coord at some point.
         - The max was 2308, min 1101.
-        - Frequencies looked like [this.](snips/2.md)
+        - Frequencies looked like [this, raw.](snips/2.md)
+        - [As an image.](figures/tile_number_frequencies.png)
 
     - x_coords: max was 21403, min was 1000.
-        - Frequencies looked like [this.](snips/3.md)
+        - Frequencies looked like [this, raw.](snips/3.md)
+        - [As an image.](figures/x_coord_frequencies.png)
     - y_coords: max was 200940, min was 2073.
+        - Frequencies looked like [this, raw.](snips/4.md)
+        - [As an image.](figures/y_coord_frequencies.png)
+
+
+- Extraction of quality scores
+    - File is 14GB in size. Lettttt's try it with bash_extract_average_qas.sh ?? Might not be worth it to rewrite in c++...
+        - Would have taken 9 hours with the shell script!! Time to try in C++
+        - **Huh, nevermind, it took 40 minutes. Hahahahaha**
+        - **Stopping here because I'm sick of data wrangling for now**
 
 
 
+- Mosaicing x and y coordinates
 
+    - For plotting quality score as a function of x and y, we know my old system works. It worked to plot ~ 30,000,000 x, y, and qas together.
+    - This new data has ~ 150,000,000 datapoints (x, y, and qa). It's only ~ 5 times larger!! So if we bin the data into 5 bins, we should be good. 
+    - Based on how the frequency plots look, lets bin in y this time.
+    - Range is 198,867, into 5 bins: 39,773.4 values per bin. So the ranges will be 
+        - [2072, 41846, 81619, 121392, 161165, 200941]
+    - Need to sort x, y, qa by the y coordinate.
 
+        - x, y coord files are 1GB in size.
+        - BUT the resulting bins don't have to be sorted. We just need to bin the data.
+        - One pass through both x and y file, if y meets condition, write the point out to the relevant bin file.
+        - Requires keeping 3 + number_bins files open at same time.
+        - Wrote a barebones c++ script to do it, used 380kb of memory (!!!!), took ~ 20 minutes to run.
+            - Checked that the [file sizes added up.](snips/5.md)
+            - **Not super sure how to check it's right. Might have fucked this up here.**
+            - **Stopping to get quality scores, and do it again with quality scores.**
 
 
 
