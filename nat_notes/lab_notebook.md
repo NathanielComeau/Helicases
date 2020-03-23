@@ -636,6 +636,8 @@ Paper writing will be cool. Good to see there is similar literature out there.
 
 - Redo binning and plotting of average quality score as a function of x and y for Ibrahim's data.
 
+- Get a basic compressor up and running. Maybe we could try to reproduce Ibrahim's results for his simplest model? Eventually we'll want to start running that thing with different models we feed to it.
+
 - Mayyyybbbeee try to visualize data as a data cube / butterfly plot?
 
 - Try to understand arithmetic coders a little better, including (?) the one used by Samcomp. I would like to build a simple one that reads two streams, data and 1's or 0's, that switches between two models based on the 1's and 0's stream.
@@ -689,6 +691,17 @@ Paper writing will be cool. Good to see there is similar literature out there.
 
 
 
+- Try binning by tile number. Looks like reads are roughly distributed uniformly between tiles. Maybe qas are correlated within each tile.
+
+
+- **Compression Ideas**
+  - There are vertical streaks in the quality score x y images. What if each x-coordinate has a different model?
+  - Highly binned data has differing quality scores. What if each bin had it's own model?
+  - *I really don't know how tile numbers fit into this. We shouldn't forget about them.*
+
+
+- How about we stack multiple x,y,qa images together to try and detect systematic biases in the illumina platform?
+
 - Turn each set of x, y, quality scores into a data cube!!! Where the 3rd axis is quality score.
     - Are x and y coordinates unique? I'm just wondering how I'll convert everything to a rectangular grid to make a data cube out of them.
 
@@ -714,7 +727,7 @@ Paper writing will be cool. Good to see there is similar literature out there.
 
 
 
-
+- Cool plotting of mosaicing figures https://python4astronomers.github.io/plotting/advanced.html
 
 
 

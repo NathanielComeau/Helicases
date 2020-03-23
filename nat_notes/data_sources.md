@@ -46,7 +46,7 @@ All reference files should be pre-processed with `ref.py`, as explained in the [
 
 [ERR174324](ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR174/ERR174324/ERR174324_1.fastq.gz) <sup>(4)</sup> (17.5 GB) <br> 
 [ERR174325](ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR174/ERR174325/ERR174325_1.fastq.gz)  (16.7 GB) <br> **Nat- I started downloading this one!**
-[ERR174326](ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR174/ERR174326/ERR174326_1.fastq.gz)  (16.3 GB) <br> 
+[ERR174326](ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR174/ERR174326/ERR174326_1.fastq.gz)  (16.3 GB) <br> **Nat- Downloaded this one**
 [ERR174327](ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR174/ERR174327/ERR174327_1.fastq.gz)  (16.3 GB) <br> 
 [ERR174328](ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR174/ERR174328/ERR174328_1.fastq.gz)  (16.3 GB) <br> 
 [ERR174329](ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR174/ERR174329/ERR174329_1.fastq.gz)  (16.3 GB) <br> 
