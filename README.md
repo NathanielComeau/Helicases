@@ -14,12 +14,15 @@
 - Nat, maybe for Ashley? **Do we know which identifier field is which in the sample data Ibrahim gave us? Can Ashley double check the format of identifier fields?** Might be possible to figure this out by reading the "recommended-fastq" paper from 482c. We could maybe ask Ibrahim as well.
 - Nat: can we learn something from previous work in quality score recalibration? Maybe there are some good insights there that we can use in making our model. This would involve looking up papers on quality score recalibration and asking Ibrahim if he has some guidance for where to start.
 - Nat: How does Samcomp's model work?
+	- *Figured it out*: See samcomp directory
 - Nat: Our paper is to be in the Nature Bioinformatics format right?
+	- Yup, see announcement on connex
 - Is our project looking for dead cameras, etc and compressing based on that? Re-ordering quality scores, or a combination of the two? **Big Picture Help.**
 - More of the same question: Is this problem just re-ordering the quality scores in the best possible way? Is this a separate problem than looking for broken cameras, etc and compressing based on that? Nat: can Ibrahim compare and contrast, in Scalce, the compression method used for reads and the one used for quality scores? *Is our project essentially trying to adapt the loss-less method used for reads to quality scores, using flow-cell etc. info?*
 - How does Scalce define an optimal ordering?
 - Nat: I'm finding a hard time figuring out where exactly compression is happening in the Scalce source code (for reads).
 - Nat: FastQC? Anything useful in there?
+- Nat: Should we use Ibrahim's benchmarking toolkit for this?
 
 ### Answers:
 
@@ -28,26 +31,17 @@
 
 ## Immediate To-Dos
 
-- Better tool to extract identifiers and quality scores from a giant FASTQ file.
-
-- K-Means Clustering
-
-- Do a quick sanity check on identifier components to explore their properties.
-  1) Is name & instrument the same for all identifiers?
-  2) Are all their lengths equal?
+- Implementation of basic compression with a simple model.
+- Implementation of compression with samcomp's model (see files in samcomp directory)
 
 ## Eventual To-Dos
 
+- Different model for each x coordinate
+- Different model for each x and y bin
+
+- Nat: K-Means Clustering
+
 ### C++ Implementation
-
-We need a working idea first, but eventually this will need implemented at production scale. The C++ source code for scalce is quite nice but
-it has lots of extra features we might not need. I'm wondering what can we take from Scalce for our prototype?
-
-### Not important- Nat tried to install Ibrahim's Benchmarking Toolkit 
-
-Tried to follow the instructions https://github.com/sfu-compbio/compression-benchmark/blob/master/aws.md
-
-, got as far as vagrant up before erroring out because of an "image not found" error.
 
 ## Random Things Nat Learned
 

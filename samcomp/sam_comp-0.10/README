@@ -1,0 +1,195 @@
+James Bonfield, Wellcome Trust Sanger Institute,  2012 - 2015.
+
+sam_comp v0.10
+==============
+
+Switched arithmetic coder as I was getting rare crashes with the
+previous one.  (This is now the same one used in fqzcomp, after
+switching it there too due to crashes.)
+
+
+sam_comp v0.9
+=============
+
+This is an alpha release of sam_comp - a SAM and BAM file compressor
+and decompressor, optionally using reference sequences.  It should be
+considered as an academic proof of concept rather than a robust
+solution to put into production.
+
+The basic usage is as follows:
+
+sam_comp [-r ref_dir] [-f format] < file.sam > file.zam
+sam_comp [-r ref_dir] [-f format] -d < file.zam > file.sam
+
+The default input format is assumed to be SAM. Use "-f bam" if you are
+inputting BAM instead.
+
+The default output format is SAM. It cannot write BAM, but
+alternatively we can emit fastq or "fq1", a special one line fastq
+derivative that is expressly aimed at easy filtering and
+modification.
+
+The reference is optional, but if specified when encoding it needs to
+be specified for decoding.
+
+TODO: It should know this and automatically use it on decoding. It
+should also crc or md5sum them to ensure they haven't changed between
+encoding and decoding.
+
+Caveats:
+- The SAM file must be sorted by position.
+
+- The SAM auxillary fields are not preserved.
+
+
+Updates in 0.9:
+- Note potentially INCOMPATIBLE output vs 0.8
+
+- The maximum sequence and cigar string length supported is now 100Kb
+  instead of 1Kb.  (Note that the code still fails when going over this
+  maximum length, so it should still be considered as a proof of
+  concept tool rather than production worthy.)
+
+- Bug fix to reading SAM headers containing lines longer than 8Kb.
+
+- Added support for 'B' auxiliary type. Sam_comp doesn't
+  encode aux data, but it prevents it from complaining during SAM
+  format parsing.
+
+
+Updates in 0.8:
+- Note INCOMPATIBLE output vs 0.7
+
+- Copes with Illumina+64 encoded quality values (despite them being
+  *wrong*). This lowers compression by maybe 2%. (I am unsure if it is
+  a good change.)
+
+- Bug fixed handling of CIGAR operations, specifically with lengths >
+  255 and hard clipping (H).
+
+- Worked around a gcc 4.6.3 optimisation bug.
+
+
+Updates in 0.7:
+- A new -M option to ignore mapping quality. Normally we'd want to
+  store this, but it is not needed by the SequenceSqueeze contest.
+
+- Improved name encodings.
+
+- Larger quality model (the same as in fqzcomp).
+
+
+Compression observations
+========================
+
+The optimal denovo compression of sequences within a fastq file would
+be to fully understand how it all fits together, to describe
+similarities and/or differences. This means we either have a large
+hash table to match against data we've seen before (fqzcomp) or better
+still go the whole hog and write our own sequence assembler. If we
+have a known reference, we could use this too - either pre-seeding our
+large hash table or using sequence alignment algorithms to pin each
+sequence on a location of the reference.
+
+All of these will improve sequence compression, but at what cost?
+Firstly it's slow and tricky to implement. Secondly I'm not going to
+be able to do a better job than the teams of people that have spent
+decades working on these problems. Thirdly and most importantly, this
+is valuable information that we should keep.
+
+If we have gone down the path of implementing a full assembler or
+mapper/aligner, then why would we only want to emit plain old fastq
+again when the file is decompressed? Afterall we know a lot of
+information - where the sequence aligns on the genome, or how it
+assembles into contigs. Why shouldn't the user get access to this
+data? Afterall it's almost certainly what they're about to do with our
+fastq file. Unfortunately fastq cannot encode this data.
+
+*** So I put it to the community that compression of fastq is largely
+pointless and not the right place to start from. ***
+
+Enter the SAM/BAM formats. They are a feature rich format for storing
+sequence alignments. We can use third party tools (whatever the user's
+favourite is) to generate an alignment - either mapping to a reference
+or if the data is deep enough doing a full denovo assembly. Once we've
+got the SAM file, then we can compress and decompress that file,
+instead of fastq, fully preserving the results of the collation and
+alignment algorithms we would need in order to implement an optimal
+fastq compressor.
+
+
+Algorithms
+==========
+
+The SAM file is split into discrete data types; names, positions,
+reference names, cigar strings, sequences, etc. Each type is then sent
+to its own dedicated algorithm which uses previous data of that type
+as a context for improving compression of incoming data. ( In this
+regard it shares a lot with the fqz_comp program and indeed has many
+of the same contexts and algorithms for the compression.)
+
+Read names use a context of the previous name and the previous
+characters in this name. It searches for specific meta characters
+(colons, spaces) to try and keep this and previous names in
+approximate alignment. Names take up a considerable amount of space
+though as in a position-ordered SAM/BAM file the names become randomly
+ordered, making delta coding harder.
+
+Flags are simply stored in high and low bytes, each with a basic model
+and entropy encoding. Sequence lengths get the same treatment.
+
+Positions are encoded as the numerical delta to the previous position,
+and then encoding per-byte of position in a similar manner to flags
+and lengths.
+
+Reference names are encoded with one model for "is the same as last"
+and if not simply writing out the new name. Given a few references and
+lots of sequences almost any method compresses this part well.
+
+Qualities get much the same treatment here as in fqzcomp - the
+previous byte, the maximum of the previous two[1], and an overall
+deviation score are used as context to predict the next value. Unlike
+fqzcomp there is currently no per-position context. [1]The reason for
+this is that low quality values can often occur early on just due to
+abherrant calls. Eg a quality string maybe 38 38 37 37 12 37 37.
+The 37s after the 12 have much more in common with the previous 37 and
+not the previous 12, so using the maximum of previous 2 improves
+predictions and decreases encoding costs.
+
+Cigar strings are split into their individual components and each
+compressed in turn, using the type of operation (M, I, D, etc) as a
+context for the typical size of the numeric component. One special
+value zero is used to indicate "the rest of the read" as this occurs
+very commonly.
+
+Sequences are where the real changes since fqzcomp come in. We step
+through the position and cigar strings to place each base against each
+position in the genome. Every genome position (including insertions)
+has a model, which is used for encoding these bases. As we add more
+and more bases in the same genomic position the model will get more
+sure what values exist and so compression improves. For the first time
+we see a base at a specific genome location, we have to initialise the
+model. This can be either denovo prediction based on previous
+consensus values (is it AT or GC rich? is it a short tandem repeat) or
+it can be seeded by using a known reference.
+
+The key advantages here over competing reference based tools such a
+CRAM are:
+
+1) A reference is not required. It's simply a way to improve the
+prediction of the first base observed in any genomic column.  The
+difference between using a reference and not using a reference should
+therefore be around 2 bits per genomic column.
+
+Hence in a deep denovo assembly there is no need (and indeed no point)
+in attaching a reference as it's a drop in the ocean.
+
+2) It is far less dependent on the reference being correct. Reference
+based compressors that compare each sequence to the reference and
+encode the differences mean that a spot with 100x coverage, all in
+agreement but not matching the reference (eg the reference was
+incorrect or we have a homozygous SNP), would mean that we have to
+store 100 differences. This program would store 1 difference - for the
+first sequence at that column - as internally the data set is self
+consistent. This both improves robustness of matching and also
+compression ratios.
