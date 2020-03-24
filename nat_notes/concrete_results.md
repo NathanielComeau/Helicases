@@ -105,6 +105,13 @@ g++ freaks.cpp -std=c++17 -o out # Compile the first time using
 ./out <input file>
 ```
 
+- Bin large x and y coordinate and average quality score file into several smaller files.
+
+With c++, from scripts/cpp directory:
+```bash
+g++ my_binner_improved.cpp -std=c++17 -o my_binner_improved # Compile the first time using
+./my_binner_improved <x_coords file> <y_coords file> <average_qas file>
+```
 
 
 
