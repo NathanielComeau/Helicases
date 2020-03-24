@@ -41,6 +41,8 @@
 
 - Nat: K-Means Clustering
 
+- From Ibrahim: "arith. coding or rANS, or samcomp/O2 models"
+
 ### C++ Implementation
 
 ## Random Things Nat Learned
