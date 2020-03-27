@@ -86,8 +86,8 @@ Done!
 ```
 
 - Read the scalce(http://bioinformatics.oxfordjournals.org/content/28/23/3051) paper for a while. Learned:
-	1) Ibrahim probably built it!
-	2) They implemented a basic lossy compression system for quality scores.
+  1) Ibrahim probably built it!
+  2) They implemented a basic lossy compression system for quality scores.
 
 
 ## I started exploring the quality score data
@@ -656,7 +656,7 @@ Paper writing will be cool. Good to see there is similar literature out there.
 
 - Try to plot x and y, with colour representing average quality score. Do it again for median quality score. Maybe you'll have to try a weird binning/filtering thing with it.
 
-	- This felt really messy; I might need to find a way to normalize in x and y to do this right. There probably is a good way to visualize this 3d data (x, y, average quality score), I'm just not quite sure how to bin it yet.
+  - This felt really messy; I might need to find a way to normalize in x and y to do this right. There probably is a good way to visualize this 3d data (x, y, average quality score), I'm just not quite sure how to bin it yet.
 
 - Got some good identifier field extractions in /Users/nat/research/Helicases/scratch/identifierComponents . Why not run some basic analytics on each of those text files? See what values they take on, frequencies, averages, periodicities, etc.
 
@@ -687,6 +687,11 @@ Paper writing will be cool. Good to see there is similar literature out there.
     - Done, need to redo it for Ibrahim's samples. Does it scale to 17 GB?
 
 
+## Notes on compression techniques
+
+From [ANS reading](https://kedartatwawadi.github.io/post--ANS/), it sounds like we have three compression techniques to try. Huffman, ANS, and arithmetic. Huffman is fastest but can be sub-optimal, arithmetic is best in size but can be slow, and ANS is a tradeoff.
+
+
 ## Crazy Ideas and Notes
 
 
@@ -700,7 +705,7 @@ Paper writing will be cool. Good to see there is similar literature out there.
   - *I really don't know how tile numbers fit into this. We shouldn't forget about them.*
 
 
-- How about we stack multiple x,y,qa images together to try and detect systematic biases in the illumina platform?
+- How about we stack multiple x,y,qa images together to try and detect systematic biases in the illumina platform? I really want to reduce all our human genome data in the same way, bin it the same way, and stack them to see if any coordinates show systematic bias.
 
 - Turn each set of x, y, quality scores into a data cube!!! Where the 3rd axis is quality score.
     - Are x and y coordinates unique? I'm just wondering how I'll convert everything to a rectangular grid to make a data cube out of them.
